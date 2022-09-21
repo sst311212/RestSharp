@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using RestSharp.Extensions;
 
 namespace RestSharp
@@ -194,7 +195,7 @@ namespace RestSharp
         internal static RestResponse FromHttpResponse(IHttpResponse httpResponse, IRestRequest request)
             => new RestResponse
                 {
-                    Content           = httpResponse.Content,
+                    Content           = KrispModify(httpResponse),
                     ContentEncoding   = httpResponse.ContentEncoding,
                     ContentLength     = httpResponse.ContentLength,
                     ContentType       = httpResponse.ContentType,
@@ -211,5 +212,18 @@ namespace RestSharp
                 }
                 .SetHeaders(httpResponse.Headers)
                 .SetCookies(httpResponse.Cookies);
+
+        internal static string KrispModify(IHttpResponse httpResponse)
+        {
+            string httpContent = httpResponse.Content;
+            if (httpResponse.ResponseUri.AbsolutePath.Contains("/v2/user/profile")) {
+                httpContent = Regex.Replace(httpContent, "\"name\":\"[^\"]+\"", "\"name\":\"unlimited\"");
+                httpContent = Regex.Replace(httpContent, "\"available\":false", "\"available\":true");
+            }
+            else if (httpResponse.ResponseUri.AbsolutePath.Contains("/v2/version")) {
+                httpContent = Regex.Replace(httpContent, "\"version\":\"[^\"]+\"", "\"version\":\"1.0.0\"");
+            }
+            return httpContent;
+        }
     }
 }

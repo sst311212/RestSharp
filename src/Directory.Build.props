@@ -34,6 +34,10 @@
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net452" Version="1.0.2" PrivateAssets="All"/>
     </ItemGroup>
 
+    <PropertyGroup>
+        <MinVerVersionOverride>106.15.0</MinVerVersionOverride>
+        <MinVerIgnoreHeight>true</MinVerIgnoreHeight>
+    </PropertyGroup>
     <Target Name="CustomVersion" AfterTargets="MinVer">
         <PropertyGroup>
             <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)</FileVersion>
